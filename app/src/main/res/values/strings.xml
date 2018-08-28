@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">AppodealExample</string>
+    <string name="click">Click!</string>
+    <string name="show_list">Show list</string>
+</resources>
