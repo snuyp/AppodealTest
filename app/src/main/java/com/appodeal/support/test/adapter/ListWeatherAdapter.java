@@ -3,6 +3,7 @@ package com.appodeal.support.test.adapter;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 
 import com.appodeal.ads.Appodeal;
 import com.appodeal.ads.NativeAd;
+import com.appodeal.ads.NativeCallbacks;
 import com.appodeal.ads.native_ad.views.NativeAdViewAppWall;
 import com.appodeal.ads.native_ad.views.NativeAdViewContentStream;
 import com.appodeal.support.test.R;
@@ -21,6 +23,8 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
+import io.presage.finder.model.App;
+
 class ListViewHolder extends RecyclerView.ViewHolder {
 
     TextView textView;
@@ -28,7 +32,7 @@ class ListViewHolder extends RecyclerView.ViewHolder {
     Context context;
     LinearLayout linearLayout;
 
-    public ListViewHolder(Context context,View itemView) {
+    public ListViewHolder(Context context, View itemView) {
         super(itemView);
         this.context = context;
         textView = itemView.findViewById(R.id.weather_name);
@@ -39,7 +43,6 @@ class ListViewHolder extends RecyclerView.ViewHolder {
 
 public class ListWeatherAdapter extends RecyclerView.Adapter<ListViewHolder> {
     private List<Weather> weatherList;
-    private NativeAdViewContentStream contentStream;
 
     public ListWeatherAdapter(List<Weather> weathers) {
         this.weatherList = weathers;
@@ -51,21 +54,19 @@ public class ListWeatherAdapter extends RecyclerView.Adapter<ListViewHolder> {
     public ListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View itemView = inflater.inflate(R.layout.weather_card_layout, parent, false);
-        return new ListViewHolder(inflater.getContext(),itemView);
+
+        return new ListViewHolder(inflater.getContext(), itemView);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ListViewHolder holder, int position) {
-
-
-        if (position == 3 && !Appodeal.getNativeAds(1).isEmpty()) { //for example replace on native
-            NativeAdViewAppWall nativeAdView = new NativeAdViewAppWall(holder.context, Appodeal.getNativeAds(1).get(0));
+    public void onBindViewHolder(@NonNull final ListViewHolder holder, int position) {
+        if (position == 3 && Appodeal.isLoaded(Appodeal.NATIVE)) {
+            final NativeAdViewAppWall nativeAdView = new NativeAdViewAppWall(holder.context, Appodeal.getNativeAds(1).get(0));
             holder.linearLayout.addView(nativeAdView);
-
-        } else {
-            holder.textView.setText(weatherList.get(position).getName());
-            holder.imageView.setImageResource(weatherList.get(position).getIdImage());
         }
+        holder.textView.setText(weatherList.get(position).getName());
+        holder.imageView.setImageResource(weatherList.get(position).getIdImage());
+
     }
 
     @Override
